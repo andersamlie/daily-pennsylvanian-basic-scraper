@@ -18,7 +18,7 @@ def scrape_data_point():
     Scrapes the main headline from The Daily Pennsylvanian home page.
 
     Returns:
-        str: The headline text if found, otherwise an empty string.
+        str: The headline text if found, otherwise an empty st ing.
     """
     headers = {
         "User-Agent": "cis3500-scraper"
