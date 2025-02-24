@@ -15,25 +15,60 @@ import loguru
 
 def scrape_data_point():
     """
-    Scrapes the main headline from The Daily Pennsylvanian home page.
+    Scrapes the main headline from the Under the Button website by first navigating 
+    from DP homepage.
 
     Returns:
-        str: The headline text if found, otherwise an empty st ing.
+        str: The headline text if found, otherwise an empty string.
     """
     headers = {
         "User-Agent": "cis3500-scraper"
     }
-    req = requests.get("https://www.thedp.com", headers=headers)
+
+    # Step 1: Fetch The Daily Pennsylvanian homepage
+    dp_url = "https://www.thedp.com"
+    req = requests.get(dp_url, headers=headers)
     loguru.logger.info(f"Request URL: {req.url}")
     loguru.logger.info(f"Request status code: {req.status_code}")
 
-    if req.ok:
-        soup = bs4.BeautifulSoup(req.text, "html.parser")
-        target_element = soup.find("a", id="utb-top-url")
-        data_point = "" if target_element is None else target_element.text
-        loguru.logger.info(f"Data point: {data_point}")
-        return data_point
+    if not req.ok:
+        return ""
 
+    soup = bs4.BeautifulSoup(req.text, "html.parser")
+
+    # Step 2: Find the link to underthebutton.com
+    utb_link_element = soup.select_one(
+        "#content > div:nth-child(5) > div:nth-child(8) > div > div.col-sm-8.pub-logo-row "
+        "> div > div.col-sm-5.external-logo-col.pub-logo-col > a"
+    )
+
+    if utb_link_element is None or "href" not in utb_link_element.attrs:
+        loguru.logger.warning("Under the Button link not found.")
+        return ""
+
+    utb_url = utb_link_element["href"]
+    loguru.logger.info(f"Navigating to Under the Button: {utb_url}")
+
+    # Step 3: Fetch the Under the Button homepage
+    utb_req = requests.get(utb_url, headers=headers)
+
+    if not utb_req.ok:
+        loguru.logger.warning("Failed to load Under the Button homepage.")
+        return ""
+
+    utb_soup = bs4.BeautifulSoup(utb_req.text, "html.parser")
+
+    # Step 4: Extract the headline from the centerpiece article
+    headline_element = utb_soup.select_one(
+        "body > div.container-fluid > div > div.col-content > div.homepage-content "
+        "> div.row.top-content > div.col-md-6 > div.centerpiece > a > h1"
+    )
+
+    headline = headline_element.text.strip() if headline_element else ""
+
+    loguru.logger.info(f"Scraped headline: {headline}")
+    
+    return headline
 
 if __name__ == "__main__":
 
