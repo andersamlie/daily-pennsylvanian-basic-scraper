@@ -25,7 +25,6 @@ def scrape_data_point():
         "User-Agent": "cis3500-scraper"
     }
 
-    # Step 1: Fetch The Daily Pennsylvanian homepage
     dp_url = "https://www.thedp.com"
     req = requests.get(dp_url, headers=headers)
     loguru.logger.info(f"Request URL: {req.url}")
@@ -36,20 +35,20 @@ def scrape_data_point():
 
     soup = bs4.BeautifulSoup(req.text, "html.parser")
 
-    # Step 2: Find the link to underthebutton.com
+    # Get to underthebutton.com thru selector
     utb_link_element = soup.select_one(
         "#content > div:nth-child(5) > div:nth-child(8) > div > div.col-sm-8.pub-logo-row "
         "> div > div.col-sm-5.external-logo-col.pub-logo-col > a"
     )
 
+    
     if utb_link_element is None or "href" not in utb_link_element.attrs:
         loguru.logger.warning("Under the Button link not found.")
         return ""
 
     utb_url = utb_link_element["href"]
-    loguru.logger.info(f"Navigating to Under the Button: {utb_url}")
 
-    # Step 3: Fetch the Under the Button homepage
+    # Fetch UTB homepage
     utb_req = requests.get(utb_url, headers=headers)
 
     if not utb_req.ok:
@@ -58,7 +57,7 @@ def scrape_data_point():
 
     utb_soup = bs4.BeautifulSoup(utb_req.text, "html.parser")
 
-    # Step 4: Extract the headline from the centerpiece article
+    # Extract the headline from the centerpiece article
     headline_element = utb_soup.select_one(
         "body > div.container-fluid > div > div.col-content > div.homepage-content "
         "> div.row.top-content > div.col-md-6 > div.centerpiece > a > h1"
