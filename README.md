@@ -1,3 +1,15 @@
+# My changes to the script -
+
+I write for Under the Button, so I figured I'd navigate to that site and take the centerpiece article headline. I'm interested in how often that's getting updated since I know we sometimes don't write that often.
+
+To do this, I had to first find the UTB button on the DP home page. I have experience scraping with Selenium so I kind of went the same way using the element's selector to find it. I error handle if the selecotr isn't found or doesn't have a link attribute. 
+
+Once the scraper clicks on that and gets to UTB's site, I simply use the selector again to get the h1 attribute of the centerpiece, trim it and out put it to the same file. Hopefully these change daily but we'll see!
+
+# My understanding of daily event monitor
+
+I played with crontab.guru and now see that the 5 values can be combined or wildcarded (*) to create intervals. The other operators - , and / allow for multiple or range of values in one slot. I think its useful to have a standard languuage for describing intervals especially when running jobs and doing other software maintenance.
+
 # Basic Git Scraper Template
 
 This template provides a starting point for **git scraping**—the technique of scraping data from websites and automatically committing it to a Git repository using workflows, [coined by Simon Willison](https://simonwillison.net/2020/Oct/9/git-scraping/).
